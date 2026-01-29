@@ -1,0 +1,12 @@
+---
+# Traefik 3: ServersTransport для MinIO Tenant Console (HTTPS бэкенд с самоподписанным сертификатом)
+# Использование: аннотация на Service minio-tenant-console:
+#   traefik.ingress.kubernetes.io/service.serversscheme: "https"
+#   traefik.ingress.kubernetes.io/service.serverstransport: "minio-operator-minio-insecure@kubernetescrd"
+apiVersion: traefik.io/v1alpha1
+kind: ServersTransport
+metadata:
+  name: minio-insecure
+  namespace: minio-operator
+spec:
+  insecureSkipVerify: true

@@ -10,6 +10,7 @@ metadata:
     cert-manager.io/cluster-issuer: "selfsigned-issuer"
     traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
+    # Бэкенд MinIO Console — HTTPS на 9443 (Traefik 3: ServersTransport для skip verify)
 spec:
   ingressClassName: traefik
   tls:

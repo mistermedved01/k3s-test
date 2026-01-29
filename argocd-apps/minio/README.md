@@ -51,6 +51,14 @@
    # Поды должны быть в состоянии Running
    ```
 
+6.1. **Traefik 3 + HTTPS-бэкенд:** после создания Tenant примените аннотации к Service (бэкенд MinIO Console — HTTPS на 9443; ServersTransport из Git уже создан):
+   ```bash
+   kubectl annotate service minio-tenant-console -n minio-operator \
+     traefik.ingress.kubernetes.io/service.serversscheme=https \
+     traefik.ingress.kubernetes.io/service.serverstransport=minio-operator-minio-insecure@kubernetescrd \
+     --overwrite
+   ```
+
 7. **Получите credentials для доступа:**
    ```bash
    # Credentials находятся в Secret storage-configuration
@@ -66,8 +74,9 @@
    ```
 
 8. **Доступ к MinIO:**
+   - Добавьте в hosts (Windows: `C:\Windows\System32\drivers\etc\hosts`, Linux: `/etc/hosts`): `192.168.40.145 minio.lab.local minio-operator.lab.local` (подставьте IP вашего узла k3s).
    - **MinIO Tenant Console (веб-интерфейс)**: `https://minio.lab.local`
-   - **MinIO Operator Console (JWT)**: `https://minio-operator.lab.local`
+   - **MinIO Operator Console (JWT)**: `https://minio-operator.lab.local` (или `https://console.local`, если chart создал правило с этим хостом)
    - **S3 Endpoint (внутренний)**: `minio-tenant-hl.minio-operator.svc.cluster.local:9000`
    - **Credentials**: `minioadmin` / `minioadmin123` (из Secret `storage-configuration`)
 
@@ -201,10 +210,8 @@ minio/
   - Содержит MinIO Tenant CRD и Secret с credentials
   - Определяет конфигурацию MinIO кластера (серверы, ресурсы, хранилище)
 
-- **`tenant/ingress.yaml`**: 
-  - Ingress для Tenant Console (вход с Access Key / Secret Key)
-  - Домен: `minio.lab.local`
-  - Backend: `minio-tenant-console:9443` (HTTPS)
+- **`tenant/ingress.yaml`**: Ingress для Tenant Console (Traefik), домен `minio.lab.local`, backend `minio-tenant-console:9443` (HTTPS).
+- **`tenant/serverstransport.yaml`**: Traefik 3 ServersTransport для HTTPS-бэкенда с `insecureSkipVerify` (самоподписанный сертификат MinIO Console).
 
 **Примечание**: Namespace `minio-operator` создается автоматически через `CreateNamespace=true` в `operator/application.yaml`.
 

@@ -40,6 +40,7 @@ spec:
               cert-manager.io/cluster-issuer: "selfsigned-issuer"
               traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
               traefik.ingress.kubernetes.io/router.tls: "true"
+            host: minio-operator.lab.local
             hosts:
               - minio-operator.lab.local
             tls:
