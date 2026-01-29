@@ -1,0 +1,29 @@
+---
+# Ingress для MinIO Tenant Console (k3s: Traefik)
+# Tenant Console поддерживает вход с Access Key / Secret Key
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: minio-tenant-console
+  namespace: minio-operator
+  annotations:
+    cert-manager.io/cluster-issuer: "selfsigned-issuer"
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - minio.lab.local
+      secretName: minio-tenant-console-tls
+  rules:
+    - host: minio.lab.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: minio-tenant-console
+                port:
+                  number: 9443
