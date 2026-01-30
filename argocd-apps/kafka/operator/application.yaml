@@ -18,8 +18,9 @@ spec:
     targetRevision: "0.49.1"
     helm:
       values: |
-        # Operator следит за namespace kafka (где будет Kafka CR)
-        watchNamespaces: "kafka"
+        # Operator следит за namespace kafka (где будет Kafka CR). Передавать списком — шаблон делает append.
+        watchNamespaces:
+          - kafka
         watchAnyNamespace: false
 
         # Ресурсы для Strimzi Cluster Operator
