@@ -1,0 +1,43 @@
+---
+# ArgoCD Application для Kafka Cluster
+# Управляет Kafka (Strimzi CR) через GitOps
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kafka-cluster
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"  # Синхронизировать после kafka-operator (wave 0)
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+
+  # Источник - репозиторий Git с манифестами Kafka (k3s-test)
+  source:
+    repoURL: https://github.com/mistermedved01/k3s-test.git
+    targetRevision: HEAD
+    path: argocd-apps/kafka/cluster
+    directory:
+      recurse: false
+      include: "*.yaml"  # Включаем kafka.yaml и ingress.yaml (если есть)
+
+  # Назначение - текущий кластер, namespace kafka
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kafka
+
+  # Политика синхронизации
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: false
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m

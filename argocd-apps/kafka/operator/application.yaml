@@ -1,0 +1,53 @@
+---
+# ArgoCD Application для Strimzi Kafka Operator
+# Развертывает Strimzi Cluster Operator через Helm chart
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kafka-operator
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+
+  # Источник - Helm chart из официального репозитория Strimzi
+  source:
+    repoURL: https://strimzi.io/charts
+    chart: strimzi-kafka-operator
+    targetRevision: "0.49.1"
+    helm:
+      values: |
+        # Operator следит за namespace kafka (где будет Kafka CR)
+        watchNamespaces: "kafka"
+        watchAnyNamespace: false
+
+        # Ресурсы для Strimzi Cluster Operator
+        resources:
+          requests:
+            cpu: 100m
+            memory: 384Mi
+          limits:
+            cpu: 1000m
+            memory: 384Mi
+
+  # Назначение - namespace strimzi для оператора
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: strimzi
+
+  # Политика синхронизации
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: false
+    syncOptions:
+      - CreateNamespace=true
+      - SkipCRDs=false  # Установить CRDs для Strimzi
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
