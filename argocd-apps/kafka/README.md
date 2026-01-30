@@ -37,6 +37,12 @@
    - **Bootstrap (plain):** `my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092`
    - **Bootstrap (TLS):** `my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9093`
 
+7. **Kafka UI (веб-интерфейс) + Ingress (опционально):**
+   ```bash
+   kubectl apply -f argocd-apps/kafka/ui-application.yaml -n argocd
+   ```
+   Манифест лежит в **kafka/** (не в ui/), чтобы при sync в namespace kafka не создавался лишний Application. После sync: **https://kafka-ui.lab.local** (добавьте в hosts IP узла k3s).
+
 📋 **Детальные инструкции:** см. секции ниже
 
 </details>
@@ -132,6 +138,8 @@ graph TB
 - **Доступ:**
   - Внутри кластера: `my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092` (plain), `:9093` (tls)
 
+- **Kafka UI**: веб-интерфейс [UI for Apache Kafka](https://github.com/provectus/kafka-ui) (provectuslabs/kafka-ui). Развёртывается в namespace `kafka`, подключается к `my-cluster-kafka-bootstrap:9092`. Ingress: `https://kafka-ui.lab.local` (Traefik + cert-manager).
+
 </details>
 
 <details>
@@ -146,7 +154,12 @@ kafka/
 ├── cluster/
 │   ├── application.yaml  # ArgoCD Application для Kafka Cluster (указывает на Git)
 │   └── kafka.yaml        # Strimzi Kafka CRD (ZooKeeper + Kafka + Entity Operator)
-└── README.md             # Этот файл
+├── ui/
+│   ├── deployment.yaml   # Kafka UI (provectuslabs/kafka-ui)
+│   ├── service.yaml
+│   └── ingress.yaml     # kafka-ui.lab.local (Traefik, TLS)
+├── ui-application.yaml   # ArgoCD Application для Kafka UI (в kafka/, не в ui/ — иначе sync создаст Application в kafka)
+└── README.md            # Этот файл
 ```
 
 **Пояснение:**
@@ -156,6 +169,10 @@ kafka/
 - **`cluster/application.yaml`**: ArgoCD Application, источник — Git, путь `argocd-apps/kafka/cluster`. Sync-wave: "1" (после operator). Назначение — namespace `kafka`.
 
 - **`cluster/kafka.yaml`**: Custom Resource `Kafka` в namespace `kafka`. Описывает ZooKeeper, брокеры Kafka (1 реплика), Entity Operator, storage и ресурсы.
+
+- **`ui-application.yaml`**: ArgoCD Application для Kafka UI. Источник — Git, путь `argocd-apps/kafka/ui`. Sync-wave: "2" (после cluster). Разворачивает Deployment + Service + Ingress в namespace `kafka`.
+
+- **`ui/`**: Deployment (образ provectuslabs/kafka-ui:v0.7.2, env: bootstrap `my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092`), Service 8080, Ingress с хостом `kafka-ui.lab.local` (cert-manager, Traefik).
 
 </details>
 

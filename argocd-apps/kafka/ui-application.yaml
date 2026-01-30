@@ -1,5 +1,6 @@
 ---
 # ArgoCD Application для Kafka UI (веб-интерфейс)
+# Применять: kubectl apply -f argocd-apps/kafka/ui-application.yaml -n argocd
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
