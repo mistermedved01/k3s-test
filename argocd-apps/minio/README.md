@@ -51,7 +51,7 @@
    # Поды должны быть в состоянии Running
    ```
 
-6.1. **Traefik 3 + HTTPS-бэкенд:** после создания Tenant примените аннотации к Service (бэкенд MinIO Console — HTTPS на 9443; ServersTransport из Git уже создан):
+6.1. **Traefik 3 + HTTPS-бэкенд:** аннотации на Service `minio-tenant-console` применяются автоматически **PostSync hook** (Job `minio-console-patch-traefik`). Если консоль не открывается — выполните вручную:
    ```bash
    kubectl annotate service minio-tenant-console -n minio-operator \
      traefik.ingress.kubernetes.io/service.serversscheme=https \
@@ -212,6 +212,8 @@ minio/
 
 - **`tenant/ingress.yaml`**: Ingress для Tenant Console (Traefik), домен `minio.lab.local`, backend `minio-tenant-console:9443` (HTTPS).
 - **`tenant/serverstransport.yaml`**: Traefik 3 ServersTransport для HTTPS-бэкенда с `insecureSkipVerify` (самоподписанный сертификат MinIO Console).
+- **`tenant/rbac-patch-console.yaml`**: ServiceAccount, Role и RoleBinding для PostSync Job (права на patch Service `minio-tenant-console`).
+- **`tenant/post-sync-patch-console-job.yaml`**: ArgoCD PostSync hook (Job) — после синхронизации ждёт появления Service и навешивает аннотации Traefik (serversscheme, serverstransport).
 
 **Примечание**: Namespace `minio-operator` создается автоматически через `CreateNamespace=true` в `operator/application.yaml`.
 
