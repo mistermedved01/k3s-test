@@ -36,15 +36,16 @@ spec:
             limits:
               cpu: 500m
               memory: 512Mi
+          # Приложение стартует ~50+ с — увеличиваем задержки проб, иначе connection refused и рестарты
           livenessProbe:
             httpGet:
               path: /actuator/health
               port: 8080
-            initialDelaySeconds: 30
-            periodSeconds: 10
+            initialDelaySeconds: 90
+            periodSeconds: 15
           readinessProbe:
             httpGet:
               path: /actuator/health
               port: 8080
-            initialDelaySeconds: 10
-            periodSeconds: 5
+            initialDelaySeconds: 60
+            periodSeconds: 10
