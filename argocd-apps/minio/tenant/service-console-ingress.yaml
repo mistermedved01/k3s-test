@@ -1,0 +1,19 @@
+---
+# Отдельный Service для Ingress с аннотациями Traefik (HTTPS-бэкенд + ServersTransport).
+# Operator управляет minio-tenant-console и при reconcile сносит аннотации — используем свой Service.
+apiVersion: v1
+kind: Service
+metadata:
+  name: minio-tenant-console-ingress
+  namespace: minio-operator
+  annotations:
+    traefik.ingress.kubernetes.io/service.serversscheme: "https"
+    traefik.ingress.kubernetes.io/service.serverstransport: "minio-operator-minio-insecure@kubernetescrd"
+spec:
+  selector:
+    v1.min.io/tenant: minio-tenant
+  ports:
+    - name: https-console
+      port: 9443
+      targetPort: 9443
+      protocol: TCP

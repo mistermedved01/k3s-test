@@ -51,14 +51,6 @@
    # Поды должны быть в состоянии Running
    ```
 
-6.1. **Traefik 3 + HTTPS-бэкенд:** навесьте аннотации на Service `minio-tenant-console` вручную (Operator пересоздаёт Service без них):
-   ```bash
-   kubectl annotate service minio-tenant-console -n minio-operator \
-     traefik.ingress.kubernetes.io/service.serversscheme=https \
-     traefik.ingress.kubernetes.io/service.serverstransport=minio-operator-minio-insecure@kubernetescrd \
-     --overwrite
-   ```
-
 7. **Получите credentials для доступа:**
    ```bash
    # Credentials находятся в Secret storage-configuration
@@ -212,6 +204,7 @@ minio/
 
 - **`tenant/ingress.yaml`**: Ingress для Tenant Console (Traefik), домен `minio.lab.local`, backend `minio-tenant-console:9443` (HTTPS).
 - **`tenant/serverstransport.yaml`**: Traefik 3 ServersTransport для HTTPS-бэкенда с `insecureSkipVerify` (самоподписанный сертификат MinIO Console).
+- **`tenant/service-console-ingress.yaml`**: отдельный Service для Ingress с аннотациями Traefik (HTTPS-бэкенд + ServersTransport). Operator управляет `minio-tenant-console` и при reconcile сносит аннотации — Ingress указывает на этот Service.
 
 **Примечание**: Namespace `minio-operator` создается автоматически через `CreateNamespace=true` в `operator/application.yaml`.
 

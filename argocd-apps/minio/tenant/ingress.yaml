@@ -25,6 +25,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: minio-tenant-console
+                name: minio-tenant-console-ingress
                 port:
                   number: 9443
