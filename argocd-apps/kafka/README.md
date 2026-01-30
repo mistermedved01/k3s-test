@@ -42,6 +42,40 @@
 </details>
 
 <details>
+<summary><strong>🔍 Проверка в кластере</strong></summary>
+
+---
+
+Выполняйте команды **на узле k3s** (например, SSH на `192.168.40.145`) или с машины, где в `KUBECONFIG` указан API-сервер этого кластера.
+
+```bash
+# Контекст и узлы
+kubectl config get-contexts
+kubectl get nodes -o wide
+
+# ArgoCD Applications для Kafka
+kubectl get applications -n argocd -l app.kubernetes.io/name=kafka 2>/dev/null || \
+  kubectl get applications -n argocd | grep -E "kafka-operator|kafka-cluster"
+
+# Strimzi Operator (namespace strimzi)
+kubectl get pods -n strimzi
+kubectl get all -n strimzi
+
+# Kafka Cluster (namespace kafka)
+kubectl get pods -n kafka
+kubectl get kafka -n kafka
+kubectl get svc -n kafka
+
+# Статус Kafka CR (готовность брокеров)
+kubectl get kafka my-cluster -n kafka -o jsonpath='{.status.conditions[*].type}{"\n"}{.status.conditions[*].status}' 2>/dev/null
+kubectl describe kafka my-cluster -n kafka | grep -A 20 "Status:"
+```
+
+**Ожидаемый результат:** в `strimzi` — под `strimzi-cluster-operator-*` в Running; в `kafka` — поды `my-cluster-kafka-*`, `my-cluster-zookeeper-*`, `entity-operator-*` в Running, сервис `my-cluster-kafka-bootstrap` на портах 9092/9093.
+
+</details>
+
+<details>
 <summary><strong>📋 Описание и компоненты</strong></summary>
 
 ---
@@ -86,13 +120,13 @@ graph TB
 
 - **Strimzi Cluster Operator**: Управляет Kafka, ZooKeeper, KafkaTopic, KafkaUser через CRD
   - Развертывается через Helm chart: `https://strimzi.io/charts`
-  - Версия chart: 0.49.1
+  - Версия chart: **0.38.0** — образ оператора совместим со старыми CPU (без x86-64-v2), как в MinIO
   - Namespace: `strimzi`
   - Следит за namespace: `kafka`
 
 - **Kafka Cluster (my-cluster)**: Одноузловой кластер для dev/test
   - ZooKeeper: 1 реплика, 5Gi PVC
-  - Kafka: 1 реплика, 10Gi PVC, listeners plain:9092 и tls:9093
+  - Kafka: 3.6.0, 1 реплика, 10Gi PVC, listeners plain:9092 и tls:9093
   - Entity Operator: Topic Operator + User Operator
 
 - **Доступ:**
@@ -182,5 +216,18 @@ spec:
 ```
 
 После создания KafkaUser в кластере появится Secret с credentials (например, `my-user`).
+
+</details>
+
+<details>
+<summary><strong>⚠️ Ошибка «CPU does not support x86-64-v2»</strong></summary>
+
+---
+
+**Симптомы:** под Strimzi operator в состоянии CrashLoopBackOff, в логах: `Fatal glibc error: CPU does not support x86-64-v2`.
+
+**Причина:** новые образы Strimzi (0.49+) собираются под x86-64-v2; старые CPU (или VM без передачи нужных инструкций) не поддерживают этот уровень.
+
+**Решение (как в MinIO):** в репозитории зафиксированы **Strimzi 0.38.0** и **Kafka 3.6.0** — образы совместимы с baseline x86-64. Не поднимайте версию chart/operator без проверки на вашем железе.
 
 </details>
