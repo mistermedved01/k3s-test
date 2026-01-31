@@ -11,11 +11,11 @@ metadata:
 spec:
   project: default
 
-  # Источник - Helm chart из официального репозитория Strimzi
+  # Источник - Helm chart из GitHub (strimzi/strimzi-kafka-operator)
   # Версия 0.38.0 — образ оператора совместим со старыми CPU (без x86-64-v2), как в MinIO (RELEASE.2023-09-04).
   source:
-    repoURL: https://strimzi.io/charts
-    chart: strimzi-kafka-operator
+    repoURL: https://github.com/strimzi/strimzi-kafka-operator.git
+    path: helm-charts/helm3/strimzi-kafka-operator
     targetRevision: "0.38.0"
     helm:
       values: |
