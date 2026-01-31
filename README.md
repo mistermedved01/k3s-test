@@ -34,13 +34,16 @@ kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.pas
 
 В репозитории доступны готовые ArgoCD Applications:
 
-- **cert-manager** - автоматическое управление TLS сертификатами
-- **Media Server Stack** - Jellyfin, Prowlarr, qBittorrent, Radarr
+- **cert-manager** — автоматическое управление TLS сертификатами
+- **MinIO** — S3-совместимое объектное хранилище (Operator + Tenant)
+- **Kafka** — Apache Kafka через Strimzi (Operator + Cluster + веб-интерфейс Kafka UI)
+- **Media Server Stack** — Jellyfin, Prowlarr, qBittorrent, Radarr
 
 Подробная документация в директории `argocd-apps/`.
 
 ## Особенности k3s
 
-- Использует **Traefik** вместо nginx-ingress (встроен по умолчанию)
-- Использует **local-path** StorageClass для PersistentVolumes
-- Оптимизирован для легковесных кластеров
+- **Traefik** — встроенный Ingress-контроллер
+- **local-path** — StorageClass по умолчанию для PVC
+- **containerd** — контейнерный рантайм 
+- Подходит для малых и тестовых кластеров

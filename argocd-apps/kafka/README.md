@@ -1,54 +1,52 @@
 # Kafka (Strimzi) ArgoCD Application (k3s)
 
-Конфигурация для развертывания Apache Kafka через Strimzi Operator и Kafka Cluster в **k3s** с ArgoCD. Стиль развертывания аналогичен MinIO: Operator (Helm) + Cluster (манифесты из Git).
+Конфигурация для развертывания Apache Kafka через Strimzi Operator и Kafka Cluster в **k3s** с ArgoCD.
 
 <details>
-<summary><strong>🚀 Быстрый старт</strong></summary>
+<summary><strong>🚀Быстрый старт</strong></summary>
 
 ---
 
 **Минимальные шаги для развертывания Kafka:**
 
-1. **StorageClass:** в k3s по умолчанию есть `local-path`. Проверка: `kubectl get storageclass`.
-
-2. **Примените ArgoCD Application для Strimzi Operator:**
+1. **Примените ArgoCD Application для Strimzi Operator:**
    ```bash
    kubectl apply -f argocd-apps/kafka/operator/application.yaml
    ```
 
-3. **Дождитесь готовности Operator (1–2 минуты):**
+2. **Дождитесь готовности Operator (1–2 минуты):**
    ```bash
    kubectl get pods -n strimzi -w
    # Под strimzi-cluster-operator должен быть в состоянии Running
    ```
 
-4. **Создайте Kafka Cluster (через ArgoCD Application):**
+3. **Создайте Kafka Cluster (через ArgoCD Application):**
    ```bash
    kubectl apply -f argocd-apps/kafka/cluster/application.yaml
    ```
 
-5. **Дождитесь готовности Kafka (3–5 минут):**
+4. **Дождитесь готовности Kafka (3–5 минут):**
    ```bash
    kubectl get pods -n kafka -w
    # Поды my-cluster-kafka, my-cluster-zookeeper, entity-operator должны быть Running
    ```
 
-6. **Подключение к Kafka (внутри кластера):**
+5. **Подключение к Kafka (внутри кластера):**
    - **Bootstrap (plain):** `my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092`
    - **Bootstrap (TLS):** `my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9093`
 
-7. **Kafka UI (веб-интерфейс) + Ingress (опционально):**
+6. **Kafka UI (веб-интерфейс) + Ingress (опционально):**
    ```bash
    kubectl apply -f argocd-apps/kafka/ui-application.yaml -n argocd
    ```
    Манифест лежит в **kafka/** (не в ui/), чтобы при sync в namespace kafka не создавался лишний Application. После sync: **https://kafka-ui.lab.local** (добавьте в hosts IP узла k3s).
 
-📋 **Детальные инструкции:** см. секции ниже
+📋**Детальные инструкции:** см. секции ниже
 
 </details>
 
 <details>
-<summary><strong>🔍 Проверка в кластере</strong></summary>
+<summary><strong>🔍Проверка в кластере</strong></summary>
 
 ---
 
@@ -82,7 +80,7 @@ kubectl describe kafka my-cluster -n kafka | grep -A 20 "Status:"
 </details>
 
 <details>
-<summary><strong>📋 Описание и компоненты</strong></summary>
+<summary><strong>📋Описание и компоненты</strong></summary>
 
 ---
 
@@ -107,10 +105,6 @@ graph TB
         EO["Entity Operator<br/>Topic + User"]
     end
 
-    subgraph Infrastructure["Infrastructure"]
-        Storage["StorageClass<br/>local-path"]
-    end
-
     ArgoCD_Op --> Operator
     ArgoCD_Cluster --> ZK
     ArgoCD_Cluster --> Kafka
@@ -118,15 +112,13 @@ graph TB
     Operator --> ZK
     Operator --> Kafka
     Operator --> EO
-    Kafka --> Storage
-    ZK --> Storage
 ```
 
 ### Компоненты
 
 - **Strimzi Cluster Operator**: Управляет Kafka, ZooKeeper, KafkaTopic, KafkaUser через CRD
   - Развертывается через Helm chart: `https://strimzi.io/charts`
-  - Версия chart: **0.38.0** — образ оператора совместим со старыми CPU (без x86-64-v2), как в MinIO
+  - Версия chart: **0.38.0** — образ оператора совместим со старыми CPU (без x86-64-v2)
   - Namespace: `strimzi`
   - Следит за namespace: `kafka`
 
@@ -143,7 +135,7 @@ graph TB
 </details>
 
 <details>
-<summary><strong>📋 Структура файлов</strong></summary>
+<summary><strong>📋Структура файлов</strong></summary>
 
 ---
 
@@ -177,19 +169,18 @@ kafka/
 </details>
 
 <details>
-<summary><strong>📋 Предварительные требования</strong></summary>
+<summary><strong>📋Предварительные требования</strong></summary>
 
 ---
 
-1. **Kubernetes 1.27+** (для Strimzi 0.49)
+1. **Kubernetes 1.27+** (для Strimzi 0.38)
 2. **ArgoCD** установлен и настроен
-3. **StorageClass** (например, `local-path` в k3s)
-4. Репозиторий **k3s-test** добавлен в ArgoCD (или применяете манифесты из локального Git)
+3. Репозиторий **k3s-test** добавлен в ArgoCD (или применяете манифесты из локального Git)
 
 </details>
 
 <details>
-<summary><strong>📋 Создание топиков и пользователей</strong></summary>
+<summary><strong>📋Создание топиков и пользователей</strong></summary>
 
 ---
 
@@ -237,7 +228,7 @@ spec:
 </details>
 
 <details>
-<summary><strong>⚠️ Ошибка «CPU does not support x86-64-v2»</strong></summary>
+<summary><strong>⚠️Ошибка «CPU does not support x86-64-v2»</strong></summary>
 
 ---
 
@@ -245,6 +236,6 @@ spec:
 
 **Причина:** новые образы Strimzi (0.49+) собираются под x86-64-v2; старые CPU (или VM без передачи нужных инструкций) не поддерживают этот уровень.
 
-**Решение (как в MinIO):** в репозитории зафиксированы **Strimzi 0.38.0** и **Kafka 3.6.0** — образы совместимы с baseline x86-64. Не поднимайте версию chart/operator без проверки на вашем железе.
+**Решение:** в репозитории зафиксированы **Strimzi 0.38.0** и **Kafka 3.6.0** — образы совместимы с baseline x86-64. Не поднимайте версию chart/operator без проверки на вашем железе.
 
 </details>

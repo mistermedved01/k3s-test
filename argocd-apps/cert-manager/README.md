@@ -3,7 +3,7 @@
 Этот каталог содержит конфигурацию для развертывания cert-manager через ArgoCD.
 
 <details>
-<summary><strong>🚀 Быстрый старт</strong></summary>
+<summary><strong>🚀Быстрый старт</strong></summary>
 
 ---
 
@@ -35,7 +35,7 @@
 </details>
 
 <details>
-<summary><strong>📋 Описание и компоненты</strong></summary>
+<summary><strong>📋Описание и компоненты</strong></summary>
 
 ---
 
@@ -71,7 +71,7 @@ sequenceDiagram
 </details>
 
 <details>
-<summary><strong>📋 Структура файлов</strong></summary>
+<summary><strong>📋Структура файлов</strong></summary>
 
 ---
 
@@ -79,14 +79,13 @@ sequenceDiagram
 cert-manager/
 ├── cert-manager.yaml                   # ArgoCD Application для cert-manager
 ├── clusterissuer-selfsigned.yaml       # ClusterIssuer для self-signed сертификатов
-├── clusterissuer-application.yaml      # ArgoCD Application для ClusterIssuer (опционально, требуется git-репозиторий)
 └── README.md                           # Этот файл
 ```
 
 </details>
 
 <details>
-<summary><strong>📋 Предварительные требования</strong></summary>
+<summary><strong>📋Предварительные требования</strong></summary>
 
 ---
 
@@ -109,7 +108,7 @@ cert-manager/
 </details>
 
 <details>
-<summary><strong>⚙️ Установка: 1. Развертывание cert-manager</strong></summary>
+<summary><strong>⚙️Установка: 1. Развертывание cert-manager</strong></summary>
 
 ---
 
@@ -161,7 +160,7 @@ kubectl get crd | grep cert-manager
 </details>
 
 <details>
-<summary><strong>⚙️ Установка: 2. Настройка ClusterIssuer</strong></summary>
+<summary><strong>⚙️Установка: 2. Настройка ClusterIssuer</strong></summary>
 
 ---
 
@@ -183,16 +182,6 @@ kubectl apply -f argocd-apps/cert-manager/clusterissuer-selfsigned.yaml
 # 3. Проверьте статус
 kubectl get clusterissuer selfsigned-issuer
 ```
-
-#### Вариант 2: Через ArgoCD Application (требует Git репозиторий)
-
-Если у вас настроен Git репозиторий в ArgoCD:
-
-1. Обновите `repoURL` в `clusterissuer-application.yaml`
-2. Примените Application:
-   ```bash
-   kubectl apply -f argocd-apps/cert-manager/clusterissuer-application.yaml
-   ```
 
 ### Let's Encrypt сертификаты (для production)
 
@@ -223,7 +212,7 @@ spec:
 </details>
 
 <details>
-<summary><strong>💡 Использование с приложениями</strong></summary>
+<summary><strong>💡Использование с приложениями</strong></summary>
 
 ---
 
@@ -297,7 +286,7 @@ spec:
 </details>
 
 <details>
-<summary><strong>🔍 Проверка работы</strong></summary>
+<summary><strong>🔍Проверка работы</strong></summary>
 
 ---
 
@@ -349,7 +338,7 @@ kubectl describe ingress <ingress-name> -n <namespace>
 </details>
 
 <details>
-<summary><strong>🔧 Устранение неполадок</strong></summary>
+<summary><strong>🔧Устранение неполадок</strong></summary>
 
 ---
 
@@ -489,7 +478,7 @@ kubectl logs -n cert-manager -l app.kubernetes.io/component=webhook
 </details>
 
 <details>
-<summary><strong>⚙️ Конфигурация и ресурсы</strong></summary>
+<summary><strong>⚙️Конфигурация и ресурсы</strong></summary>
 
 ---
 
@@ -532,20 +521,20 @@ ArgoCD автоматически синхронизирует изменени�
 </details>
 
 <details>
-<summary><strong>🔒 Безопасность</strong></summary>
+<summary><strong>🔒Безопасность</strong></summary>
 
 ---
 
 ### Self-signed сертификаты
 
-⚠️ **Важно:** Self-signed сертификаты не являются безопасными для production:
+⚠️**Важно:** Self-signed сертификаты не являются безопасными для production:
 - Браузеры будут показывать предупреждения
 - Не подходят для публичных сервисов
 - Используйте только для тестовой среды
 
 ### Let's Encrypt сертификаты
 
-✅ **Для production:**
+✅**Для production:**
 - Используйте Let's Encrypt для валидных сертификатов
 - Настройте правильный DNS
 - Обеспечьте доступность домена из интернета
@@ -554,7 +543,7 @@ ArgoCD автоматически синхронизирует изменени�
 </details>
 
 <details>
-<summary><strong>⚠️ Важные замечания</strong></summary>
+<summary><strong>⚠️Важные замечания</strong></summary>
 
 ---
 
@@ -565,7 +554,7 @@ ArgoCD автоматически синхронизирует изменени�
    - **Шаг 4:** Проверьте, что ClusterIssuer в состоянии Ready
    - **Шаг 5:** Только после этого развертывайте приложения (GitLab, Rancher и т.д.)
    
-   ⚠️ **Важно:** Если приложение развернуто ДО создания ClusterIssuer, могут возникнуть проблемы с Certificate. См. раздел "Устранение неполадок" ниже.
+   ⚠️**Важно:** Если приложение развернуто ДО создания ClusterIssuer, могут возникнуть проблемы с Certificate. См. раздел "Устранение неполадок" ниже.
 
 2. **ClusterIssuer vs Issuer:**
    - **ClusterIssuer** - кластерный ресурс, доступен во всех namespace

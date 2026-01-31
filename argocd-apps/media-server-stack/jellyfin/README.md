@@ -3,7 +3,7 @@
 Этот каталог содержит конфигурацию для развертывания Jellyfin через ArgoCD.
 
 <details>
-<summary><strong>🚀 Быстрый старт</strong></summary>
+<summary><strong>🚀Быстрый старт</strong></summary>
 
 ---
 
@@ -46,12 +46,12 @@
    - URL: `https://jellyfin.lab.local`
    - При первом входе будет запущен мастер настройки
 
-📋 **Детальные инструкции:** см. секции ниже
+📋**Детальные инструкции:** см. секции ниже
 
 </details>
 
 <details>
-<summary><strong>📋 Описание и компоненты</strong></summary>
+<summary><strong>📋Описание и компоненты</strong></summary>
 
 ---
 
@@ -105,7 +105,7 @@ graph TB
 </details>
 
 <details>
-<summary><strong>📋 Структура файлов</strong></summary>
+<summary><strong>📋Структура файлов</strong></summary>
 
 ---
 
@@ -133,7 +133,7 @@ jellyfin/
 </details>
 
 <details>
-<summary><strong>📋 Предварительные требования</strong></summary>
+<summary><strong>📋Предварительные требования</strong></summary>
 
 ---
 
@@ -171,7 +171,7 @@ jellyfin/
 </details>
 
 <details>
-<summary><strong>⚙️ Установка</strong></summary>
+<summary><strong>⚙️Установка</strong></summary>
 
 ---
 
@@ -320,7 +320,7 @@ kubectl get ingress -n jellyfin
 </details>
 
 <details>
-<summary><strong>🔍 Доступ и первоначальная настройка</strong></summary>
+<summary><strong>🔍Доступ и первоначальная настройка</strong></summary>
 
 ---
 
@@ -332,7 +332,7 @@ kubectl get ingress -n jellyfin
 
 ### Предупреждение о сертификате (self-signed)
 
-⚠️ При использовании self-signed сертификатов браузер покажет предупреждение о безопасности. Это нормально для тестовой среды. Нажмите "Advanced" → "Proceed to jellyfin.lab.local" для продолжения.
+⚠️При использовании self-signed сертификатов браузер покажет предупреждение о безопасности. Это нормально для тестовой среды. Нажмите "Advanced" → "Proceed to jellyfin.lab.local" для продолжения.
 
 ### Первоначальная настройка
 
@@ -415,7 +415,7 @@ kubectl delete pod -n jellyfin media-uploader
 </details>
 
 <details>
-<summary><strong>🔍 Проверка статуса развертывания</strong></summary>
+<summary><strong>🔍Проверка статуса развертывания</strong></summary>
 
 ---
 
@@ -519,7 +519,7 @@ kubectl get all -n jellyfin
 </details>
 
 <details>
-<summary><strong>⚙️ Конфигурация и ресурсы</strong></summary>
+<summary><strong>⚙️Конфигурация и ресурсы</strong></summary>
 
 ---
 
@@ -607,7 +607,7 @@ argocd app sync jellyfin
 </details>
 
 <details>
-<summary><strong>🔧 Устранение неполадок</strong></summary>
+<summary><strong>🔧Устранение неполадок</strong></summary>
 
 ---
 
@@ -753,11 +753,11 @@ kubectl get ingress,certificate -n jellyfin
 </details>
 
 <details>
-<summary><strong>🔒 Включение SSL/TLS</strong></summary>
+<summary><strong>🔒Включение SSL/TLS</strong></summary>
 
 ---
 
-⚠️ **ВАЖНО: Правильный порядок развертывания**
+⚠️**ВАЖНО: Правильный порядок развертывания**
 
 1. **Сначала разверните cert-manager:**
    ```bash
@@ -810,7 +810,7 @@ kubectl get certificate jellyfin-tls -n jellyfin
 </details>
 
 <details>
-<summary><strong>💡 Рекомендации по оптимизации</strong></summary>
+<summary><strong>💡Рекомендации по оптимизации</strong></summary>
 
 ---
 
@@ -866,17 +866,17 @@ kubectl get certificate jellyfin-tls -n jellyfin
 </details>
 
 <details>
-<summary><strong>⚠️ Важные замечания</strong></summary>
+<summary><strong>⚠️Важные замечания</strong></summary>
 
 ---
 
-⚠️ **Для тестовой среды:**
+⚠️**Для тестовой среды:**
 - Используется self-signed сертификат (браузер покажет предупреждение)
 - Размер media PVC ограничен 50Gi
 - Уменьшенные ресурсы для транскодирования
 - Подходит для разработки и тестирования
 
-✅ **Для production окружения:**
+✅**Для production окружения:**
 - Обязательно включите SSL/TLS с Let's Encrypt
 - Настройте cert-manager
 - Увеличьте размер media PVC
@@ -885,12 +885,12 @@ kubectl get certificate jellyfin-tls -n jellyfin
 - Рассмотрите использование GPU
 - Используйте внешнее хранилище для медиафайлов
 
-📦 **Хранение медиафайлов:**
+📦**Хранение медиафайлов:**
 - По умолчанию используется local-path (локальное хранилище на ноде)
 - Для production рекомендуется использовать сетевое хранилище (NFS, NAS)
 - При миграции пода на другую ноду данные могут быть недоступны (если используется local-path)
 
-🎬 **Транскодирование:**
+🎬**Транскодирование:**
 - Транскодирование - ресурсоемкий процесс
 - Рекомендуется использовать аппаратное ускорение (GPU)
 - Без GPU транскодирование может быть медленным
@@ -899,7 +899,7 @@ kubectl get certificate jellyfin-tls -n jellyfin
 </details>
 
 <details>
-<summary><strong>📚 Дополнительная информация</strong></summary>
+<summary><strong>📚Дополнительная информация</strong></summary>
 
 ---
 
