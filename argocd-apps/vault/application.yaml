@@ -1,0 +1,38 @@
+# ArgoCD Application для Vault. Применить: kubectl apply -f argocd-apps/vault/application.yaml
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: vault
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/mistermedved01/k3s-test.git
+    path: argocd-apps/vault/helm/charts/vault-1.14.0
+    targetRevision: main
+    helm:
+      releaseName: vault
+      valueFiles:
+        - ../../custom-values/lab.local.yaml
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: vault
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: false
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m

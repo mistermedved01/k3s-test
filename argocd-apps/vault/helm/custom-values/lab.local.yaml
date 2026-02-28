@@ -1,0 +1,150 @@
+# Имя ресурсов в кластере (StatefulSet, Pod, Service и т.д.) 
+# Окружение lab.local (K3s). Можно переопределить, например: vault-lab-local
+fullnameOverride: vault
+global:
+  enabled: true
+  serverTelemetry:
+    prometheusOperator: true
+  tlsDisable: false
+  # K3s: PSP deprecated, используем Pod Security Standards
+  psp:
+    enable: false
+injector:
+  image:
+    repository: "hashicorp/vault-k8s"
+    tag: "1.2.1"
+  agentImage:
+    repository: "hashicorp/vault"
+    tag: 1.14.0
+  certs:
+    # CA bundle из preconfigure/keys/lab.local/caBundle.b64 (сгенерировано generate-vault-certs.sh)
+    caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUZZekNDQTB1Z0F3SUJBZ0lVREdPU290ZDRub3h1NEFQOXdsV2NkYzR5SUYwd0RRWUpLb1pJaHZjTkFRRUwKQlFBd1FURVNNQkFHQTFVRUNnd0piR0ZpTG14dlkyRnNNUTR3REFZRFZRUUxEQVYyWVhWc2RERWJNQmtHQTFVRQpBd3dTYkdGaUxteHZZMkZzSUZaaGRXeDBJRU5CTUI0WERUSTJNREl5TnpJek5Ua3hNRm9YRFRNMk1ESXlOVEl6Ck5Ua3hNRm93UVRFU01CQUdBMVVFQ2d3SmJHRmlMbXh2WTJGc01RNHdEQVlEVlFRTERBVjJZWFZzZERFYk1Ca0cKQTFVRUF3d1NiR0ZpTG14dlkyRnNJRlpoZFd4MElFTkJNSUlDSWpBTkJna3Foa2lHOXcwQkFRRUZBQU9DQWc4QQpNSUlDQ2dLQ0FnRUF2MDQ3Z1hlVlJUVFIrcHg0N0hpQkNGcGpvMzY2MU5FS21LWjgxVlJYMjl6cU5wNTRRRFFECitlT0F1WUtvdjh6V3hCL0VzRmxaY0lSL1JOZVVEbE9pdDd6d0wydXM5SXJNeXVLSUNSZmp6MGRDUDBvbmRzbEsKdUd0bHpqUXo4dWJHQmlZL2dqaTVjcThrd2JQcFJYUzZzRVJHRTNFdEpmcittM3pFWXRlNzRDZ3pRTG9XYlVOdQpqNVJnV3kzYXNRMGRJcW9XT1FldHZkdGV6SkZYMno3SFRLOEZLL0xWd25JblY5TnF6SE5rOWpvZnRIL241RGVUClBDUmRwamRBSGljNmJJVVdhOGZaRXVlK1I2T2FLclBkZExTNXhlckwvTHVReTNDVVRscWdxZ01rNEJwOE14RzMKclphd3c2OGdaQ1ZmNVpPc1NMMnNCdTUzcEU1UUJXaHNPS0h1RGQwdFVwUHhDRXpYNXY1UDQyZDNFREtLVUIzaQpHMEQ4K29UK0dRR1p3amRqcEZhRXIwYUFVZ0J4V0VNR3VTalRoZFZjVDlZYVZPcFFqNWI4elFoZFRvV2lRWXVqCkpzdXZCSlNsRTZrTC9rMWI3bVFHVVI4dm40aGRkOTArbDNsRWZkeXFwTXIyR2dFV1B6V1pvRDFpRmZUbGVTVm0KR2hSemYrejFJUG52cDlSYzlSdnViSGpjZlUrdjNxUDVoMXJ4bk51ZjFieGtoNWZSTjZrM20yRnZ3b0pNUFN5TwpuRVlNcjJPT05jd3RDUFZpVjZDZ1dCdFhUSWhXdDJ4KzNzdVV5QmFGcDlxK1dpVHpOQldQdUJkMDZzSVlzNW5zCklhZ2RWdmUxNTBheGluKytSY2lHakxMc3hjZU5YL2JobnNhaXBPWmpBQzhvMUZRdHZvOGhzWjhDQXdFQUFhTlQKTUZFd0hRWURWUjBPQkJZRUZCbHlua05IT2NzYkptU1o2Z1dOcm1pUVg2TDJNQjhHQTFVZEl3UVlNQmFBRkJseQpua05IT2NzYkptU1o2Z1dOcm1pUVg2TDJNQThHQTFVZEV3RUIvd1FGTUFNQkFmOHdEUVlKS29aSWh2Y05BUUVMCkJRQURnZ0lCQUova0NMRGJsV1ZBUnh2K3drOW9qek5DeTBzSUdoT1NRdncrR2ZtOVlBUkdqL2lPdmtOOGxnOVoKS0tqWVl5cnFEbys3dWExRUcrcGVLcTVDYURTUmc1MDU2ejNMK1h4aGxGclBsQ3IyREh3eXRjWVdHdkN5TTJTLwp0MDB2UkVpZ09TNGEzL1dPRTVGZzN3bVdWaDVKRi9SR1lCUHdJZTdDMjUzL0txUlVwalVsTVBKWlh2NUVDUTBqCnlRMjJiTXhFWDZ6emUzaHJQZHVkekxDTUl3VVNWc1hZZEVmNUZLY1ZLUDNuSUV4c2ZodG9LeElSQktRYXNEelAKWjRGSGJRQW1GUTJvOHJyYXk2WVg1ZTFoSGtxcXJMWGVTNENFRHRtMVQ2ais4dXpFNXMveWEzQjg0bzVJMURIcApnU3VBdjJ1OUNVOUpWWDN1aFdmQzVwQklhM2tqWlViNnlTVk50MTgzazA5a1liMTA3ckFydU1zQ2FVbm52SzRaCmF0UmkwYWVDbGM5cVFkR1pTS3MyVlZVdENRbFRVNWM3NmFLb3ViUXhHNHdMdFMyZ08wQnQrMjhZUjdmcmIyQjAKa0QrUWpIYkpEczVDdlhjaHgvRWtkUU1hc3p1STkzK0RlQi9DYTdmbXdWbGdqbnNnYlB6TXBuZXEreVNKQ3p0ZgpQZjlaTmwyTjEyNDZBMExHdFdabWJSalIxNXpoa0txUW1XT3lrdHp0UHJFd2QxZVp0UWx0TWhLYXNYL0tvRnYwCjhRelgxQ1dRZkhrQnFCeFZjZ0N0ZkwxUzlJem45djBRMHF6UmhaY0N5R1hvQ2pZbGJPNW5VOEtwZDJlUVpVWTMKV0NlSVFNOTRiTjUyZi9kbVh0MmhSaTBNazBVYjRNMmoyWlhKT0NZakUrS0dtRzhvWDlCYQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+    secretName: vault-injector-crt
+  enabled: true
+  resources:
+    limits:
+      cpu: 260m
+      memory: 256Mi
+    requests:
+      cpu: 260m
+      memory: 256Mi
+server:
+  auditStorage:
+    enabled: true
+    mountPath: /vault/audit
+    size: 10Gi
+    # K3s: стандартный provisioner — local-path
+    storageClass: local-path
+  dataStorage:
+    enabled: true
+    mountPath: /vault/data
+    size: 10Gi
+    storageClass: local-path
+  enabled: true
+  extraEnvironmentVars:
+    VAULT_CACERT: /vault/userconfig/vault-ca/ca.crt
+  extraVolumes:
+    - name: vault-ca
+      type: configMap
+    - name: vault-crt
+      type: secret
+  ha:
+    apiAddr: "https://$(VAULT_K8S_POD_NAME).vault-internal:8200"
+    enabled: true
+    raft:
+      config: >
+        ui = true
+        disable_mlock = true
+        listener "tcp" {
+          tls_disable = false
+          address = "[::]:8200"
+          cluster_address = "[::]:8201"
+          tls_cert_file = "/vault/userconfig/vault-crt/tls.crt"
+          tls_key_file = "/vault/userconfig/vault-crt/tls.key"
+          tls_client_ca_file = "/vault/userconfig/vault-ca/ca.crt"
+          # Enable unauthenticated metrics access (necessary for Prometheus Operator)
+          telemetry {
+            unauthenticated_metrics_access = "true"
+          }
+        }
+        telemetry {
+          prometheus_retention_time = "30s"
+          disable_hostname = true
+        }
+        storage "raft" {
+          path = "/vault/data"
+          retry_join {
+            leader_api_addr = "https://vault-0.vault-internal:8200"
+            leader_ca_cert_file = "/vault/userconfig/vault-ca/ca.crt"
+            leader_client_cert_file = "/vault/userconfig/vault-crt/tls.crt"
+            leader_client_key_file = "/vault/userconfig/vault-crt/tls.key"
+          }
+        }
+        service_registration "kubernetes" {}
+      enabled: true
+      setNodeId: true
+    replicas: 1
+  image:
+    repository: "hashicorp/vault"
+    tag: 1.14.0
+  ingress:
+    activeService: true
+    annotations:
+      cert-manager.io/cluster-issuer: "selfsigned-issuer"
+      # K3s: Traefik — entrypoint для TLS
+      traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    enabled: true
+    ingressClassName: traefik
+    hosts:
+      - host: vault.lab.local
+        paths: []
+    # TLS для Ingress (cert-manager)
+    tls:
+      - secretName: vault-ingress-tls
+        hosts:
+          - vault.lab.local
+  livenessProbe:
+    enabled: true
+    initialDelaySeconds: 60
+    path: /v1/sys/health?standbyok=true
+    port: 8200
+    timeoutSeconds: 10
+    periodSeconds: 10
+    failureThreshold: 3
+  readinessProbe:
+    enabled: true
+    path: /v1/sys/health?standbyok=true&sealedcode=204&uninitcode=204
+    port: 8200
+    timeoutSeconds: 10
+    periodSeconds: 5
+    initialDelaySeconds: 10
+    failureThreshold: 5
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+  updateStrategyType: OnDelete
+  # K3s/Traefik: backend HTTPS к Vault (порт 8200)
+  service:
+    active:
+      annotations:
+        traefik.ingress.kubernetes.io/service.serversscheme: https
+serverTelemetry:
+  prometheusRules:
+    enabled: true
+    rules: []
+  serviceMonitor:
+    enabled: true
+ui:
+  enabled: true
+  externalPort: 8200
+  serviceNodePort: null
+  serviceType: ClusterIP
+
+csi:
+  image:
+    repository: "hashicorp/vault-csi-provider"
+    tag: "1.4.0"
