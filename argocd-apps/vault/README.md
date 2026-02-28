@@ -84,7 +84,13 @@ kubectl delete pvc -n vault -l app.kubernetes.io/name=vault   # при необ�
 
 1. **Namespace и preconfigure** — команды из раздела «Сертификаты» выше.
 
-2. **ArgoCD Application:**
+2. **ServersTransport для Traefik** (чтобы Traefik подключался к HTTPS-бэкенду Vault без проверки сертификата):
+
+   ```bash
+   kubectl apply -f argocd-apps/vault/serverstransport.yaml
+   ```
+
+3. **ArgoCD Application:**
 
    ```bash
    kubectl apply -f argocd-apps/vault/application.yaml
@@ -92,7 +98,7 @@ kubectl delete pvc -n vault -l app.kubernetes.io/name=vault   # при необ�
 
    Либо установить через **Helm** — см. выше.
 
-3. **Проверка:**
+4. **Проверка:**
    ```bash
    kubectl get pods -n vault
    kubectl get pvc -n vault
@@ -100,9 +106,9 @@ kubectl delete pvc -n vault -l app.kubernetes.io/name=vault   # при необ�
    ```
    Должен появиться PVC `data-vault-0` (StorageClass `local-path`).
 
-4. **Доступ:** https://vault.lab.local (hosts/DNS при необходимости).
+5. **Доступ:** https://vault.lab.local (hosts/DNS при необходимости).
 
-5. **Инициализация и unseal** — см. раздел ниже.
+6. **Инициализация и unseal** — см. раздел ниже.
 
 ---
 
@@ -151,6 +157,7 @@ kubectl exec -it vault-0 -n vault -- vault status
 ```
 argocd-apps/vault/
 ├── application.yaml              # ArgoCD Application (path: helm/charts/vault-1.14.0, valueFiles: ../../custom-values/lab.local.yaml)
+├── serverstransport.yaml         # Traefik: insecureSkipVerify для HTTPS-бэкенда (применить вручную)
 ├── README.md                     # Документация (этот файл)
 ├── preconfigure/
 │   ├── scripts/

@@ -1,0 +1,13 @@
+---
+# Traefik: ServersTransport для Vault (HTTPS бэкенд с CA-подписанным сертификатом).
+# Нужен, чтобы Traefik не проверял сертификат бэкенда (самоподписанный CA из preconfigure).
+# Применить до/вместе с Vault: kubectl apply -f argocd-apps/vault/serverstransport.yaml
+# На сервисе vault-active задаётся аннотация:
+#   traefik.ingress.kubernetes.io/service.serverstransport: "vault-vault-insecure@kubernetescrd"
+apiVersion: traefik.io/v1alpha1
+kind: ServersTransport
+metadata:
+  name: vault-insecure
+  namespace: vault
+spec:
+  insecureSkipVerify: true

@@ -127,10 +127,12 @@ server:
       cpu: 250m
       memory: 256Mi
   updateStrategyType: OnDelete
-  # K3s/Traefik: backend HTTPS к Vault (порт 8200). Аннотация на Service, чтобы Traefik ходил по HTTPS.
+  # K3s/Traefik: backend HTTPS к Vault (порт 8200). ServersTransport отключает проверку сертификата бэкенда.
+  # Применить serverstransport.yaml: kubectl apply -f argocd-apps/vault/serverstransport.yaml
   service:
     annotations:
       traefik.ingress.kubernetes.io/service.serversscheme: https
+      traefik.ingress.kubernetes.io/service.serverstransport: vault-vault-insecure@kubernetescrd
 serverTelemetry:
   prometheusRules:
     enabled: false
