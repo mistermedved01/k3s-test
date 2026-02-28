@@ -4,7 +4,7 @@ fullnameOverride: vault
 global:
   enabled: true
   serverTelemetry:
-    prometheusOperator: true
+    prometheusOperator: false   # без Prometheus Operator в кластере — ServiceMonitor не создаём
   tlsDisable: false
   # K3s: PSP deprecated, используем Pod Security Standards
   psp:
@@ -134,10 +134,9 @@ server:
         traefik.ingress.kubernetes.io/service.serversscheme: https
 serverTelemetry:
   prometheusRules:
-    enabled: true
-    rules: []
+    enabled: false
   serviceMonitor:
-    enabled: true
+    enabled: false
 ui:
   enabled: true
   externalPort: 8200
